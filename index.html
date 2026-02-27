@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitQuest Ultra - Cyber Interface</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --accent: #ff007f;
+            --success: #00ff88;
+            --text: #ffffff;
+        }
+
+        /* --- ANIMOWANE TŁO --- */
+        body {
+            background: linear-gradient(-45deg, #050505, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text);
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        nav {
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* NEW STORAGE RESET BUTTON */
+        .btn-clear-storage {
+            background: rgba(255, 0, 127, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+        .btn-clear-storage:hover {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        .hamburger { cursor: pointer; z-index: 1001; padding: 10px; }
+        .hamburger div { width: 30px; height: 3px; background: var(--primary); margin: 6px 0; box-shadow: 0 0 10px var(--primary); }
+
+        .menu-overlay {
+            position: fixed; top: 0; right: -100%; width: 300px; height: 100%;
+            background: rgba(5, 5, 5, 0.98); backdrop-filter: blur(20px);
+            transition: 0.5s; z-index: 999; padding: 100px 30px; border-left: 2px solid var(--primary);
+        }
+        .menu-overlay.active { right: 0; }
+        .menu-overlay a { display: block; color: white; text-decoration: none; font-size: 1.2rem; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; }
+
+        .container {
+            max-width: 1400px; margin: 40px auto; padding: 0 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px;
+        }
+
+        .card {
+            background: var(--glass); border-radius: 24px; padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+            transition: 0.4s;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 0 20px rgba(0, 242, 255, 0.1); }
+
+        .full-width { grid-column: 1 / -1; }
+
+        h2 { text-transform: uppercase; letter-spacing: 3px; font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-item { background: rgba(0,0,0,0.4); padding: 15px 5px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-item span { font-size: 1.3rem; display: block; font-weight: bold; color: var(--primary); }
+        .stat-item small { font-size: 0.7rem; color: #aaa; }
+
+        input, select {
+            background: rgba(0,0,0,0.5); border: 2px solid #222; padding: 12px;
+            border-radius: 10px; color: white; width: 100%; font-size: 1rem; margin-bottom: 10px; box-sizing: border-box;
+        }
+
+        .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .input-mini { width: 70px !important; text-align: center; margin-bottom: 0 !important; }
+
+        button {
+            background: linear-gradient(90deg, var(--primary), var(--secondary)); border: none;
+            padding: 15px; border-radius: 10px; color: white; font-weight: bold;
+            text-transform: uppercase; cursor: pointer; width: 100%; transition: 0.3s;
+        }
+        button:hover { filter: brightness(1.2); box-shadow: 0 0 15px var(--primary); }
+
+        .btn-reset-day {
+            background: transparent; border: 1px solid var(--accent); color: var(--accent);
+            padding: 8px 15px; font-size: 0.7rem; margin-top: 10px; width: auto;
+        }
+        .btn-reset-day:hover { background: var(--accent); color: white; }
+
+        /* --- UPDATED TRAINING APPEARANCE --- */
+        .workout-log-card { 
+            background: rgba(255,255,255,0.03); 
+            border-radius: 20px; 
+            margin-bottom: 20px; 
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .workout-log-header {
+            background: rgba(0, 242, 255, 0.05);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+        }
+        .workout-log-header b { color: var(--primary); letter-spacing: 1px; }
+
+        .exercise-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 20px; 
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
+        }
+        .exercise-row:last-child { border-bottom: none; }
+        .exercise-row.completed { background: rgba(0, 255, 136, 0.03); opacity: 0.6; }
+
+        .exercise-info { display: flex; flex-direction: column; gap: 4px; }
+        .exercise-name { font-weight: bold; font-size: 1.05rem; color: #fff; }
+        .exercise-name.done { text-decoration: line-through; color: var(--success); }
+
+        .stat-pill {
+            display: inline-flex; background: rgba(0, 242, 255, 0.1);
+            padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2);
+            font-size: 0.7rem; color: var(--primary); font-weight: bold;
+        }
+        .exercise-row.completed .stat-pill {
+            background: rgba(0, 255, 136, 0.1); color: var(--success); border-color: rgba(0, 255, 136, 0.2);
+        }
+
+        .check-btn-circle {
+            width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;
+            color: transparent; font-size: 1.1rem;
+        }
+        .check-btn-circle.active { 
+            background: var(--success); border-color: var(--success); 
+            box-shadow: 0 0 15px var(--success); color: #000; font-weight: 900;
+        }
+
+        /* --- STARE LISTY (Meal Log etc.) --- */
+        .log-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .log-info { display: flex; flex-direction: column; }
+        .log-main-text { font-weight: bold; font-size: 1.1rem; }
+        .log-sub-text { font-size: 0.85rem; color: var(--success); font-weight: bold; }
+        .log-sub-text.diet { color: var(--accent); }
+
+        #draft-list { margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px dashed var(--secondary); }
+        .draft-tag { font-size: 0.8rem; background: rgba(112, 0, 255, 0.2); padding: 5px; margin: 3px; border-radius: 5px; display: inline-block; }
+
+        .glow-text { color: var(--primary); text-shadow: 0 0 15px var(--primary); font-size: 1.8rem; font-weight: 900; }
+        #rank-indicator { font-size: 3rem; font-weight: 900; text-align: center; margin: 10px 0; transition: 0.5s; }
+    </style>
+</head>
+<body>
+
+    <div class="menu-overlay" id="menu">
+        <a onclick="toggleMenu()">📊 Panel Główny</a>
+        <a onclick="resetAll()" style="color: var(--accent);">⚠️ Hard Reset Wszystkiego</a>
+        <a onclick="toggleMenu()">❌ Zamknij</a>
+    </div>
+
+    <nav>
+        <div class="glow-text">FITQUEST ELITE</div>
+        <div style="display: flex; align-items: center;">
+            <button class="btn-clear-storage" onclick="resetAll()">Wyczyść Dane</button>
+            <div class="hamburger" onclick="toggleMenu()">
+                <div></div><div></div><div></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card full-width" style="text-align: center;">
+            <h2>Aktualna Ranga</h2>
+            <div id="rank-indicator">BRĄZ</div>
+            <p>XP: <span id="pts" style="color: var(--primary); font-weight: bold;">0</span></p>
+        </div>
+
+        <div class="card">
+            <h2><span style="color: var(--accent)">●</span> Dodaj Posiłek</h2>
+            <input type="text" id="m-name" placeholder="Nazwa (np. Shake po treningu)">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <input type="number" id="m-kcal" placeholder="Kcal">
+                <input type="number" id="m-p" placeholder="Białko">
+                <input type="number" id="m-w" placeholder="Węgle">
+                <input type="number" id="m-t" placeholder="Tłuszcz">
+            </div>
+            <button onclick="addMeal()">Dodaj do Dnia (+15 XP)</button>
+        </div>
+
+        <div class="card">
+            <h2><span style="color: var(--secondary)">●</span> Kreator Treningu</h2>
+            <input type="text" id="plan-name" placeholder="Nazwa treningu (np. PULL)">
+            <select id="ex-selector">
+                <option value="Bench Press">Bench Press</option>
+                <option value="Deadlift">Deadlift</option>
+                <option value="Squats">Squats</option>
+                <option value="Pull Ups">Pull Ups</option>
+                <option value="Biceps Curl">Biceps Curl</option>
+                <option value="Plank">Plank</option>
+            </select>
+            <div class="input-row">
+                <input type="number" id="ex-sets" class="input-mini" placeholder="S">
+                <span style="font-weight: bold; color: var(--accent);">X</span>
+                <input type="number" id="ex-reps" class="input-mini" placeholder="R">
+                <button onclick="addExToDraft()" style="width: auto;">+</button>
+            </div>
+            <div id="draft-list">Brak ćwiczeń.</div>
+            <button onclick="savePlan()">Zapisz Plan</button>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2><span style="color: var(--accent)">●</span> Dzisiejsze Menu</h2>
+                <button class="btn-reset-day" onclick="resetDayMeals()">RESETUJ DZIEŃ</button>
+            </div>
+            <div class="stat-grid" style="margin-top: 15px;">
+                <div class="stat-item"><span id="kcal">0</span><small>KCAL</small></div>
+                <div class="stat-item"><span id="p">0</span><small>B(G)</small></div>
+                <div class="stat-item"><span id="w">0</span><small>W(G)</small></div>
+                <div class="stat-item"><span id="t">0</span><small>T(G)</small></div>
+            </div>
+            <div id="meals-container"></div>
+        </div>
+
+        <div class="card">
+            <h2><span style="color: var(--success)">●</span> Twoje Treningi</h2>
+            <div id="workout-plans-container"></div>
+        </div>
+    </div>
+
+    <script>
+        let data = JSON.parse(localStorage.getItem('fitQuestPro')) || { 
+            pts: 0, kcal: 0, p: 0, w: 0, t: 0, plans: [], meals: [] 
+        };
+
+        let draftExercises = [];
+
+        function toggleMenu() { document.getElementById('menu').classList.toggle('active'); }
+
+        function updateUI() {
+            ['pts', 'kcal', 'p', 'w', 't'].forEach(key => document.getElementById(key).innerText = data[key]);
+            
+            const ranks = [
+                {n: "LEGENDA", m: 10000, c: "#ff4500"},
+                {n: "MASTER", m: 5000, c: "#ff007f"},
+                {n: "DIAMENT", m: 2000, c: "#00f2ff"},
+                {n: "ZŁOTO", m: 600, c: "#ffd700"},
+                {n: "BRĄZ", m: 0, c: "#cd7f32"}
+            ];
+
+            let rank = ranks.find(r => data.pts >= r.m);
+            const rInd = document.getElementById('rank-indicator');
+            rInd.innerText = rank.n;
+            rInd.style.webkitTextFillColor = rank.c;
+            rInd.style.textShadow = `0 0 30px ${rank.c}`;
+            
+            renderPlans();
+            renderMeals();
+            localStorage.setItem('fitQuestPro', JSON.stringify(data));
+        }
+
+        function resetDayMeals() {
+            if(confirm("Czy chcesz wyzerować kalorie i posiłki z dzisiejszego dnia?")) {
+                data.meals = []; data.kcal = 0; data.p = 0; data.w = 0; data.t = 0;
+                updateUI();
+            }
+        }
+
+        function addMeal() {
+            const m = {
+                name: document.getElementById('m-name').value || "Posiłek",
+                kcal: parseInt(document.getElementById('m-kcal').value) || 0,
+                p: parseInt(document.getElementById('m-p').value) || 0,
+                w: parseInt(document.getElementById('m-w').value) || 0,
+                t: parseInt(document.getElementById('m-t').value) || 0
+            };
+            data.meals.push(m);
+            data.kcal += m.kcal; data.p += m.p; data.w += m.w; data.t += m.t;
+            data.pts += 15;
+            updateUI();
+            ['m-name', 'm-kcal', 'm-p', 'm-w', 'm-t'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function renderMeals() {
+            const container = document.getElementById('meals-container');
+            container.innerHTML = data.meals.map((m, idx) => `
+                <div class="log-item">
+                    <div class="log-info">
+                        <span class="log-main-text">${m.name}</span>
+                        <span class="log-sub-text diet">${m.kcal} kcal | B:${m.p}g</span>
+                    </div>
+                    <button onclick="deleteMeal(${idx})" style="width:auto; padding:5px 10px; background:var(--accent)">X</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteMeal(idx) {
+            const m = data.meals[idx];
+            data.kcal -= m.kcal; data.p -= m.p; data.w -= m.w; data.t -= m.t;
+            data.meals.splice(idx, 1);
+            updateUI();
+        }
+
+        function addExToDraft() {
+            const name = document.getElementById('ex-selector').value;
+            const sets = document.getElementById('ex-sets').value || "0";
+            const reps = document.getElementById('ex-reps').value || "0";
+            draftExercises.push({ name, sets, reps, done: false });
+            document.getElementById('draft-list').innerHTML = draftExercises.map(e => `
+                <span class="draft-tag">${e.name} ${e.sets}x${e.reps}</span>
+            `).join("");
+        }
+
+        function savePlan() {
+            const name = document.getElementById('plan-name').value;
+            if(!name || draftExercises.length === 0) return alert("Uzupełnij plan!");
+            data.plans.push({ name, exercises: draftExercises });
+            draftExercises = [];
+            document.getElementById('plan-name').value = '';
+            document.getElementById('draft-list').innerHTML = 'Brak ćwiczeń.';
+            updateUI();
+        }
+
+        // --- UPDATED RENDER FUNCTION ---
+        function renderPlans() {
+            const container = document.getElementById('workout-plans-container');
+            container.innerHTML = data.plans.map((p, pIdx) => `
+                <div class="workout-log-card">
+                    <div class="workout-log-header">
+                        <b>${p.name.toUpperCase()}</b>
+                        <button onclick="deletePlan(${pIdx})" style="width:auto; padding:5px 12px; font-size:0.6rem; background:rgba(255,0,127,0.2); border:1px solid var(--accent); color: white;">USUŃ</button>
+                    </div>
+                    ${p.exercises.map((ex, eIdx) => `
+                        <div class="exercise-row ${ex.done ? 'completed' : ''}">
+                            <div class="exercise-info">
+                                <span class="exercise-name ${ex.done ? 'done' : ''}">${ex.name}</span>
+                                <div class="stat-pill">${ex.sets} SERII × ${ex.reps} POWT.</div>
+                            </div>
+                            <div class="check-btn-circle ${ex.done ? 'active' : ''}" onclick="toggleEx(${pIdx}, ${eIdx})">
+                                ✓
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        function toggleEx(pIdx, eIdx) {
+            data.plans[pIdx].exercises[eIdx].done = !data.plans[pIdx].exercises[eIdx].done;
+            data.pts += data.plans[pIdx].exercises[eIdx].done ? 50 : -50;
+            updateUI();
+        }
+
+        function deletePlan(idx) { if(confirm("Usunąć plan?")) { data.plans.splice(idx, 1); updateUI(); } }
+
+        function resetAll() {
+            if(confirm("UWAGA! To usunie wszystkie dane, plany i punkty z pamięci przeglądarki. Kontynuować?")) {
+                localStorage.removeItem('fitQuestPro');
+                data = { pts: 0, kcal: 0, p: 0, w: 0, t: 0, plans: [], meals: [] };
+                updateUI();
+                location.reload();
+            }
+        }
+
+        window.onload = updateUI;
+    </script>
+</body>
+</html>
