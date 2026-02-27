@@ -3,302 +3,409 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GymQuest Ultra - Personalna Aplikacja do treningow</title>
+    <title>GymQuest Ultra v2 - Forge Your Body</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #050505;
-            --glass: rgba(255, 255, 255, 0.05);
+            --bg: #030303;
+            --glass: rgba(255, 255, 255, 0.03);
             --primary: #00f2ff;
-            --secondary: #7000ff;
+            --secondary: #bc13fe;
             --accent: #ff007f;
             --success: #00ff88;
-            --text: #ffffff;
+            --text: #e0e0e0;
+            --card-border: rgba(255, 255, 255, 0.08);
         }
 
-        /* --- ANIMOWANE TŁO --- */
         body {
-            background: linear-gradient(-45deg, #050505, #1a1a2e, #16213e, #0f3460);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            background: radial-gradient(circle at top right, #1a1a2e, #050505 60%);
+            background-attachment: fixed;
             color: var(--text);
-            font-family: 'Orbitron', sans-serif;
-            min-height: 100vh;
+            font-family: 'Rajdhani', sans-serif;
             margin: 0;
             padding-bottom: 50px;
+            overflow-x: hidden;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
+        /* Stylizacja nagłówka */
         nav {
-            padding: 25px 40px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--primary);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
-        /* NEW STORAGE RESET BUTTON */
-        .btn-clear-storage {
-            background: rgba(255, 0, 127, 0.1);
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            font-weight: bold;
-            margin-right: 20px;
-        }
-        .btn-clear-storage:hover {
-            background: var(--accent);
-            color: white;
-            box-shadow: 0 0 15px var(--accent);
+        .glow-text { 
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary); 
+            text-shadow: 0 0 15px var(--primary); 
+            font-size: 1.4rem; 
+            font-weight: 900; 
+            letter-spacing: 2px;
         }
 
-        .hamburger { cursor: pointer; z-index: 1001; padding: 10px; }
-        .hamburger div { width: 30px; height: 3px; background: var(--primary); margin: 6px 0; box-shadow: 0 0 10px var(--primary); }
-
-        .menu-overlay {
-            position: fixed; top: 0; right: -100%; width: 300px; height: 100%;
-            background: rgba(5, 5, 5, 0.98); backdrop-filter: blur(20px);
-            transition: 0.5s; z-index: 999; padding: 100px 30px; border-left: 2px solid var(--primary);
-        }
-        .menu-overlay.active { right: 0; }
-        .menu-overlay a { display: block; color: white; text-decoration: none; font-size: 1.2rem; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; }
-
+        /* Kontenery i Karty */
         .container {
-            max-width: 1400px; margin: 40px auto; padding: 0 20px;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px;
+            max-width: 1200px; margin: 30px auto; padding: 0 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px;
         }
 
         .card {
-            background: var(--glass); border-radius: 24px; padding: 30px;
-            border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-            transition: 0.4s;
+            background: var(--glass); 
+            border-radius: 20px; 
+            padding: 25px;
+            border: 1px solid var(--card-border); 
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 0 20px rgba(0, 242, 255, 0.1); }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+            transform: translateY(-3px);
+        }
 
         .full-width { grid-column: 1 / -1; }
 
-        h2 { text-transform: uppercase; letter-spacing: 3px; font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-
-        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .stat-item { background: rgba(0,0,0,0.4); padding: 15px 5px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        .stat-item span { font-size: 1.3rem; display: block; font-weight: bold; color: var(--primary); }
-        .stat-item small { font-size: 0.7rem; color: #aaa; }
-
-        input, select {
-            background: rgba(0,0,0,0.5); border: 2px solid #222; padding: 12px;
-            border-radius: 10px; color: white; width: 100%; font-size: 1rem; margin-bottom: 10px; box-sizing: border-box;
-        }
-
-        .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .input-mini { width: 70px !important; text-align: center; margin-bottom: 0 !important; }
-
-        button {
-            background: linear-gradient(90deg, var(--primary), var(--secondary)); border: none;
-            padding: 15px; border-radius: 10px; color: white; font-weight: bold;
-            text-transform: uppercase; cursor: pointer; width: 100%; transition: 0.3s;
-        }
-        button:hover { filter: brightness(1.2); box-shadow: 0 0 15px var(--primary); }
-
-        .btn-reset-day {
-            background: transparent; border: 1px solid var(--accent); color: var(--accent);
-            padding: 8px 15px; font-size: 0.7rem; margin-top: 10px; width: auto;
-        }
-        .btn-reset-day:hover { background: var(--accent); color: white; }
-
-        /* --- UPDATED TRAINING APPEARANCE --- */
-        .workout-log-card { 
-            background: rgba(255,255,255,0.03); 
-            border-radius: 20px; 
+        h2 { 
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase; 
+            font-size: 1rem; 
             margin-bottom: 20px; 
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
+            color: var(--primary);
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+
+        /* Formularze i Specjalna Lista */
+        input, select {
+            background: rgba(0,0,0,0.5); 
+            border: 1px solid #333; 
+            padding: 12px;
+            border-radius: 8px; 
+            color: white; 
+            width: 100%; 
+            font-size: 1rem; 
+            margin-bottom: 12px; 
+            box-sizing: border-box;
+            transition: 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* NOWY STYL LISTY (SELECT) */
+        select {
+            background: rgba(0, 242, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            color: var(--primary);
+            font-weight: 900;
+            text-shadow: 0 0 10px var(--primary);
+            cursor: pointer;
+            appearance: none; /* Usuwa standardową strzałkę dla lepszego wyglądu */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300f2ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+            background-color: rgba(0, 242, 255, 0.1);
+        }
+
+        /* Stylizacja opcji (Wsparcie ograniczone przez przeglądarki) */
+        optgroup {
+            background: #0a0a0a;
+            color: var(--secondary);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        option {
+            background: #0a0a0a;
+            color: var(--primary);
+            font-weight: 700;
+            padding: 10px;
+        }
+
+        .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* Przyciski */
+        button {
+            background: linear-gradient(135deg, var(--secondary), var(--primary)); 
+            border: none;
+            padding: 14px; 
+            border-radius: 8px; 
+            color: white; 
+            font-weight: bold;
+            text-transform: uppercase; 
+            cursor: pointer; 
+            width: 100%; 
+            transition: 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 20px var(--secondary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            width: auto;
+        }
+
+        /* System Rangi */
+        #rank-indicator { 
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem; 
+            font-weight: 900; 
+            margin: 10px 0;
+        }
+
+        /* Filtrowanie */
+        .filter-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #444;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .filter-chip.active {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            font-weight: bold;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* Statystyki */
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .stat-item { 
+            background: rgba(0,0,0,0.3); 
+            padding: 15px 5px; 
+            border-radius: 12px; 
+            text-align: center; 
+            border: 1px solid var(--card-border);
+        }
+        .stat-item span { font-size: 1.4rem; display: block; font-weight: bold; color: var(--primary); }
+        .stat-item small { font-size: 0.6rem; color: #888; text-transform: uppercase; }
+
+        /* Lista Ćwiczeń */
+        .workout-log-card { 
+            background: rgba(255,255,255,0.02); 
+            border-radius: 15px; 
+            margin-bottom: 15px; 
+            border-left: 4px solid var(--secondary);
         }
         .workout-log-header {
-            background: rgba(0, 242, 255, 0.05);
-            padding: 15px 20px;
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(0, 242, 255, 0.1);
-        }
-        .workout-log-header b { color: var(--primary); letter-spacing: 1px; }
-
-        .exercise-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 15px 20px; 
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            transition: 0.3s;
-        }
-        .exercise-row:last-child { border-bottom: none; }
-        .exercise-row.completed { background: rgba(0, 255, 136, 0.03); opacity: 0.6; }
-
-        .exercise-info { display: flex; flex-direction: column; gap: 4px; }
-        .exercise-name { font-weight: bold; font-size: 1.05rem; color: #fff; }
-        .exercise-name.done { text-decoration: line-through; color: var(--success); }
-
-        .stat-pill {
-            display: inline-flex; background: rgba(0, 242, 255, 0.1);
-            padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2);
-            font-size: 0.7rem; color: var(--primary); font-weight: bold;
-        }
-        .exercise-row.completed .stat-pill {
-            background: rgba(0, 255, 136, 0.1); color: var(--success); border-color: rgba(0, 255, 136, 0.2);
+            background: rgba(255,255,255,0.03);
         }
 
-        .check-btn-circle {
-            width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary);
-            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;
-            color: transparent; font-size: 1.1rem;
-        }
-        .check-btn-circle.active { 
-            background: var(--success); border-color: var(--success); 
-            box-shadow: 0 0 15px var(--success); color: #000; font-weight: 900;
+        .exercise-row {
+            padding: 12px 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* --- STARE LISTY (Meal Log etc.) --- */
-        .log-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .log-info { display: flex; flex-direction: column; }
-        .log-main-text { font-weight: bold; font-size: 1.1rem; }
-        .log-sub-text { font-size: 0.85rem; color: var(--success); font-weight: bold; }
-        .log-sub-text.diet { color: var(--accent); }
+        .exercise-info b { display: block; color: #fff; font-size: 1rem; }
+        .exercise-info small { color: var(--primary); font-size: 0.7rem; text-transform: uppercase; }
 
-        #draft-list { margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px dashed var(--secondary); }
-        .draft-tag { font-size: 0.8rem; background: rgba(112, 0, 255, 0.2); padding: 5px; margin: 3px; border-radius: 5px; display: inline-block; }
+        .check-btn {
+            width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--primary);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.3s; color: transparent;
+        }
+        .check-btn.active { background: var(--success); border-color: var(--success); color: #000; }
 
-        .glow-text { color: var(--primary); text-shadow: 0 0 15px var(--primary); font-size: 1.8rem; font-weight: 900; }
-        #rank-indicator { font-size: 3rem; font-weight: 900; text-align: center; margin: 10px 0; transition: 0.5s; }
+        #draft-list {
+            margin: 10px 0; padding: 10px; min-height: 40px;
+            border: 1px dashed #444; border-radius: 8px; font-size: 0.8rem;
+        }
+        
+        .draft-item {
+            display: inline-block; background: var(--secondary); color: white;
+            padding: 3px 8px; border-radius: 4px; margin: 2px;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="menu-overlay" id="menu">
-        <a onclick="toggleMenu()">📊 Panel Główny</a>
-        <a onclick="resetAll()" style="color: var(--accent);">⚠️ Hard Reset Wszystkiego</a>
-        <a onclick="toggleMenu()">❌ Zamknij</a>
-    </div>
-
     <nav>
-        <div class="glow-text">GYMQUEST ULTRA</div>
-        <div style="display: flex; align-items: center;">
-            <button class="btn-clear-storage" onclick="resetAll()">Wyczyść Dane</button>
-            <div class="hamburger" onclick="toggleMenu()">
-                <div></div><div></div><div></div>
-            </div>
-        </div>
+        <div class="glow-text">GYMQUEST_ULTRA</div>
+        <button class="btn-outline" onclick="resetAll()">Hard Reset</button>
     </nav>
 
     <div class="container">
         <div class="card full-width" style="text-align: center;">
-            <h2>Aktualna Ranga</h2>
+            <h2>Aktualny Poziom Mocy</h2>
             <div id="rank-indicator">BRĄZ</div>
-            <p>XP: <span id="pts" style="color: var(--primary); font-weight: bold;">0</span></p>
+            <p style="letter-spacing: 2px; font-size: 0.9rem;">DOŚWIADCZENIE: <span id="pts" style="color: var(--primary); font-weight: bold;">0</span> XP</p>
         </div>
 
         <div class="card">
-            <h2><span style="color: var(--accent)">●</span> Dodaj Posiłek</h2>
-            <input type="text" id="m-name" placeholder="Nazwa (np. Shake po treningu)">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <h2><span style="color: var(--accent)">●</span> Logowanie Paliwa</h2>
+            <input type="text" id="m-name" placeholder="Nazwa posiłku...">
+            <div class="input-group">
                 <input type="number" id="m-kcal" placeholder="Kcal">
-                <input type="number" id="m-p" placeholder="Białko">
-                <input type="number" id="m-w" placeholder="Węgle">
-                <input type="number" id="m-t" placeholder="Tłuszcz">
+                <input type="number" id="m-p" placeholder="Białko (g)">
+                <input type="number" id="m-w" placeholder="Węgle (g)">
+                <input type="number" id="m-t" placeholder="Tłuszcz (g)">
             </div>
-            <button onclick="addMeal()">Dodaj do Dnia (+15 XP)</button>
+            <button onclick="addMeal()">Dodaj Posiłek (+15 XP)</button>
+            
+            <div style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
+                <h2>Bilans Dnia</h2>
+                <button class="btn-outline" onclick="resetDayMeals()">Reset</button>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-item"><span id="kcal">0</span><small>Kcal</small></div>
+                <div class="stat-item"><span id="p">0</span><small>Białko</small></div>
+                <div class="stat-item"><span id="w">0</span><small>Węgle</small></div>
+                <div class="stat-item"><span id="t">0</span><small>Tłuszcz</small></div>
+            </div>
+            <div id="meals-container" style="margin-top: 15px;"></div>
         </div>
 
         <div class="card">
             <h2><span style="color: var(--secondary)">●</span> Kreator Treningu</h2>
-            <input type="text" id="plan-name" placeholder="Nazwa treningu (np. PULL)">
-            <select id="ex-selector">
-                <option value="Bench Press">Bench Press</option>
-                <option value="Deadlift">Deadlift</option>
-                <option value="Squats">Squats</option>
-                <option value="Pull Ups">Pull Ups</option>
-                <option value="Biceps Curl">Biceps Curl</option>
-                <option value="Plank">Plank</option>
-            </select>
-            <div class="input-row">
-                <input type="number" id="ex-sets" class="input-mini" placeholder="S">
-                <span style="font-weight: bold; color: var(--accent);">X</span>
-                <input type="number" id="ex-reps" class="input-mini" placeholder="R">
-                <button onclick="addExToDraft()" style="width: auto;">+</button>
+            <input type="text" id="plan-name" placeholder="Nazwa planu (np. PUSH A)">
+            
+            <div class="filter-container" id="muscle-filters">
+                <div class="filter-chip active" onclick="filterExercises('All', this)">Wszystkie</div>
             </div>
-            <div id="draft-list">Brak ćwiczeń.</div>
-            <button onclick="savePlan()">Zapisz Plan</button>
+
+            <select id="ex-selector"></select>
+
+            <div class="input-group" style="margin-bottom: 10px;">
+                <input type="number" id="ex-sets" placeholder="Serie">
+                <input type="number" id="ex-reps" placeholder="Powtórzenia">
+            </div>
+            
+            <button onclick="addExToDraft()" style="background: transparent; border: 1px solid var(--primary); color: var(--primary); margin-bottom: 10px;">
+                Dodaj Ćwiczenie do Listy
+            </button>
+            
+            <div id="draft-list">Lista ćwiczeń w planie...</div>
+            <button onclick="savePlan()">Zapisz Cały Plan</button>
         </div>
 
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2><span style="color: var(--accent)">●</span> Dzisiejsze Menu</h2>
-                <button class="btn-reset-day" onclick="resetDayMeals()">RESETUJ DZIEŃ</button>
-            </div>
-            <div class="stat-grid" style="margin-top: 15px;">
-                <div class="stat-item"><span id="kcal">0</span><small>KCAL</small></div>
-                <div class="stat-item"><span id="p">0</span><small>B(G)</small></div>
-                <div class="stat-item"><span id="w">0</span><small>W(G)</small></div>
-                <div class="stat-item"><span id="t">0</span><small>T(G)</small></div>
-            </div>
-            <div id="meals-container"></div>
-        </div>
-
-        <div class="card">
-            <h2><span style="color: var(--success)">●</span> Twoje Treningi</h2>
+            <h2><span style="color: var(--success)">●</span> Aktywne Protokoły</h2>
             <div id="workout-plans-container"></div>
         </div>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('fitQuestPro')) || { 
-            pts: 0, kcal: 0, p: 0, w: 0, t: 0, plans: [], meals: [] 
+        const exerciseDB = {
+            "Klatka": ["Wyciskanie Sztangi", "Wyciskanie Hantli Skos", "Rozpiętki", "Dipy"],
+            "Plecy": ["Podciąganie", "Martwy Ciąg", "Wiosłowanie", "Przyciąganie Wyciągu"],
+            "Barki": ["OHP", "Wznosy Bokiem", "Facepulls", "Arnoldki"],
+            "Nogi": ["Przysiady", "Suwnica", "Prostowanie nóg", "Uginanie nóg", "Wspięcia"],
+            "Ramiona": ["Uginanie ze Sztangą", "Młotki", "Dipy", "Wyprosty na wyciągu"],
+            "Brzuch": ["Plank", "Allahy", "Wznosy nóg"]
         };
 
+        let data = JSON.parse(localStorage.getItem('GymQuestUltraV2')) || { 
+            pts: 0, kcal: 0, p: 0, w: 0, t: 0, plans: [], meals: [] 
+        };
         let draftExercises = [];
 
-        function toggleMenu() { document.getElementById('menu').classList.toggle('active'); }
+        function initApp() {
+            const filterCont = document.getElementById('muscle-filters');
+            Object.keys(exerciseDB).forEach(muscle => {
+                const chip = document.createElement('div');
+                chip.className = 'filter-chip';
+                chip.innerText = muscle;
+                chip.onclick = () => filterExercises(muscle, chip);
+                filterCont.appendChild(chip);
+            });
+            
+            filterExercises('All');
+            updateUI();
+        }
+
+        function filterExercises(muscle, el) {
+            if(el) {
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                el.classList.add('active');
+            }
+            
+            const selector = document.getElementById('ex-selector');
+            selector.innerHTML = '<option value="" disabled selected>Wybierz ćwiczenie...</option>';
+            
+            for (const group in exerciseDB) {
+                if (muscle === 'All' || muscle === group) {
+                    const optGroup = document.createElement('optgroup');
+                    optGroup.label = `── ${group.toUpperCase()} ──`;
+                    exerciseDB[group].forEach(ex => {
+                        const opt = document.createElement('option');
+                        opt.value = ex;
+                        opt.dataset.muscle = group;
+                        opt.innerText = `● ${ex}`;
+                        optGroup.appendChild(opt);
+                    });
+                    selector.appendChild(optGroup);
+                }
+            }
+        }
 
         function updateUI() {
             ['pts', 'kcal', 'p', 'w', 't'].forEach(key => document.getElementById(key).innerText = data[key]);
             
             const ranks = [
-                {n: "LEGENDA", m: 10000, c: "#ff4500"},
-                {n: "MASTER", m: 5000, c: "#ff007f"},
-                {n: "DIAMENT", m: 2000, c: "#00f2ff"},
-                {n: "ZŁOTO", m: 600, c: "#ffd700"},
+                {n: "CYBORG", m: 5000, c: "#ff007f"},
+                {n: "ELITA", m: 2000, c: "#00f2ff"},
+                {n: "PRO", m: 1000, c: "#bc13fe"},
+                {n: "DZIK", m: 500, c: "#00ff88"},
                 {n: "BRĄZ", m: 0, c: "#cd7f32"}
             ];
 
             let rank = ranks.find(r => data.pts >= r.m);
             const rInd = document.getElementById('rank-indicator');
             rInd.innerText = rank.n;
-            rInd.style.webkitTextFillColor = rank.c;
-            rInd.style.textShadow = `0 0 30px ${rank.c}`;
+            rInd.style.color = rank.c;
+            rInd.style.textShadow = `0 0 20px ${rank.c}`;
             
             renderPlans();
             renderMeals();
-            localStorage.setItem('fitQuestPro', JSON.stringify(data));
-        }
-
-        function resetDayMeals() {
-            if(confirm("Czy chcesz wyzerować kalorie i posiłki z dzisiejszego dnia?")) {
-                data.meals = []; data.kcal = 0; data.p = 0; data.w = 0; data.t = 0;
-                updateUI();
-            }
+            localStorage.setItem('GymQuestUltraV2', JSON.stringify(data));
         }
 
         function addMeal() {
@@ -317,87 +424,92 @@
         }
 
         function renderMeals() {
-            const container = document.getElementById('meals-container');
-            container.innerHTML = data.meals.map((m, idx) => `
-                <div class="log-item">
-                    <div class="log-info">
-                        <span class="log-main-text">${m.name}</span>
-                        <span class="log-sub-text diet">${m.kcal} kcal | B:${m.p}g</span>
-                    </div>
-                    <button onclick="deleteMeal(${idx})" style="width:auto; padding:5px 10px; background:var(--accent)">X</button>
+            document.getElementById('meals-container').innerHTML = data.meals.map((m, i) => `
+                <div style="font-size:0.8rem; padding:8px; border-bottom:1px solid #222; display:flex; justify-content:space-between;">
+                    <span>${m.name} (${m.kcal} kcal)</span>
+                    <span style="color:var(--accent); cursor:pointer; font-weight:bold;" onclick="deleteMeal(${i})">USUŃ</span>
                 </div>
             `).join('');
         }
 
-        function deleteMeal(idx) {
-            const m = data.meals[idx];
+        function deleteMeal(i) {
+            const m = data.meals[i];
             data.kcal -= m.kcal; data.p -= m.p; data.w -= m.w; data.t -= m.t;
-            data.meals.splice(idx, 1);
+            data.meals.splice(i, 1);
             updateUI();
         }
 
         function addExToDraft() {
-            const name = document.getElementById('ex-selector').value;
-            const sets = document.getElementById('ex-sets').value || "0";
-            const reps = document.getElementById('ex-reps').value || "0";
-            draftExercises.push({ name, sets, reps, done: false });
+            const sel = document.getElementById('ex-selector');
+            if(sel.selectedIndex <= 0) return alert("Wybierz ćwiczenie!");
+            
+            const opt = sel.options[sel.selectedIndex];
+            draftExercises.push({
+                name: opt.value,
+                muscle: opt.dataset.muscle,
+                sets: document.getElementById('ex-sets').value || 3,
+                reps: document.getElementById('ex-reps').value || 10,
+                done: false
+            });
+            
             document.getElementById('draft-list').innerHTML = draftExercises.map(e => `
-                <span class="draft-tag">${e.name} ${e.sets}x${e.reps}</span>
-            `).join("");
+                <span class="draft-item">${e.name}</span>
+            `).join('');
         }
 
         function savePlan() {
             const name = document.getElementById('plan-name').value;
-            if(!name || draftExercises.length === 0) return alert("Uzupełnij plan!");
+            if(!name || draftExercises.length === 0) return alert("Wpisz nazwę i dodaj ćwiczenia!");
             data.plans.push({ name, exercises: draftExercises });
             draftExercises = [];
             document.getElementById('plan-name').value = '';
-            document.getElementById('draft-list').innerHTML = 'Brak ćwiczeń.';
+            document.getElementById('draft-list').innerText = 'Lista ćwiczeń w planie...';
             updateUI();
         }
 
-        // --- UPDATED RENDER FUNCTION ---
         function renderPlans() {
-            const container = document.getElementById('workout-plans-container');
-            container.innerHTML = data.plans.map((p, pIdx) => `
+            document.getElementById('workout-plans-container').innerHTML = data.plans.map((p, pI) => `
                 <div class="workout-log-card">
                     <div class="workout-log-header">
-                        <b>${p.name.toUpperCase()}</b>
-                        <button onclick="deletePlan(${pIdx})" style="width:auto; padding:5px 12px; font-size:0.6rem; background:rgba(255,0,127,0.2); border:1px solid var(--accent); color: white;">USUŃ</button>
+                        <b style="font-family:Orbitron; letter-spacing:1px; color:var(--primary);">${p.name}</b>
+                        <button class="btn-outline" onclick="deletePlan(${pI})">USUŃ</button>
                     </div>
-                    ${p.exercises.map((ex, eIdx) => `
-                        <div class="exercise-row ${ex.done ? 'completed' : ''}">
+                    ${p.exercises.map((ex, eI) => `
+                        <div class="exercise-row">
                             <div class="exercise-info">
-                                <span class="exercise-name ${ex.done ? 'done' : ''}">${ex.name}</span>
-                                <div class="stat-pill">${ex.sets} SERII × ${ex.reps} POWT.</div>
+                                <small>${ex.muscle}</small>
+                                <b style="${ex.done ? 'text-decoration:line-through; color:var(--success);' : ''}">${ex.name}</b>
+                                <span style="font-size:0.7rem; opacity:0.7;">${ex.sets} x ${ex.reps}</span>
                             </div>
-                            <div class="check-btn-circle ${ex.done ? 'active' : ''}" onclick="toggleEx(${pIdx}, ${eIdx})">
-                                ✓
-                            </div>
+                            <div class="check-btn ${ex.done ? 'active' : ''}" onclick="toggleEx(${pI}, ${eI})">✓</div>
                         </div>
                     `).join('')}
                 </div>
             `).join('');
         }
 
-        function toggleEx(pIdx, eIdx) {
-            data.plans[pIdx].exercises[eIdx].done = !data.plans[pIdx].exercises[eIdx].done;
-            data.pts += data.plans[pIdx].exercises[eIdx].done ? 50 : -50;
+        function toggleEx(pI, eI) {
+            const ex = data.plans[pI].exercises[eI];
+            ex.done = !ex.done;
+            data.pts += ex.done ? 50 : -50;
             updateUI();
         }
 
-        function deletePlan(idx) { if(confirm("Usunąć plan?")) { data.plans.splice(idx, 1); updateUI(); } }
+        function deletePlan(i) { if(confirm("Usunąć plan?")) { data.plans.splice(i, 1); updateUI(); } }
+
+        function resetDayMeals() {
+            data.meals = []; data.kcal = 0; data.p = 0; data.w = 0; data.t = 0;
+            updateUI();
+        }
 
         function resetAll() {
-            if(confirm("UWAGA! To usunie wszystkie dane, plany i punkty z pamięci przeglądarki. Kontynuować?")) {
-                localStorage.removeItem('fitQuestPro');
-                data = { pts: 0, kcal: 0, p: 0, w: 0, t: 0, plans: [], meals: [] };
-                updateUI();
+            if(confirm("Wszystkie dane zostaną usunięte. Jesteś pewien?")) {
+                localStorage.removeItem('GymQuestUltraV2');
                 location.reload();
             }
         }
 
-        window.onload = updateUI;
+        window.onload = initApp;
     </script>
 </body>
 </html>
